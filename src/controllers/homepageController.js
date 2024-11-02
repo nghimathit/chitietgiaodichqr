@@ -36,7 +36,7 @@ console.log(lastDay);
 
 const loginAndGetAmount = async (username,password) => {
     const getmerchant =
-      "http://localhost:3001/api/profile/v2/merchants?language=vi";
+      "https://proxymomo.onrender.com/api/profile/v2/merchants?language=vi";
     const data = {
       username,
       password
@@ -44,7 +44,7 @@ const loginAndGetAmount = async (username,password) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/authentication/login?language=vi",
+        "https://proxymomo.onrender.com/api/authentication/login?language=vi",
         data
       );
       const token = response.data.data.token;
@@ -56,7 +56,7 @@ const loginAndGetAmount = async (username,password) => {
       const merchantId = merchantResponse.data.data.merchantResponseList[0].id;
     
       const transactionData = await axios.get(
-        `http://localhost:3001/api/transaction/v2/transactions?pageSize=100&pageNumber=0&fromDate=${firstDay}T00%3A00%3A00.00&toDate=${lastDay}T23%3A59%3A59.00&dateId=THIS_MONTH&status=ALL&merchantId=${merchantId}&language=vi`
+        `https://proxymomo.onrender.com/api/transaction/v2/transactions?pageSize=100&pageNumber=0&fromDate=${firstDay}T00%3A00%3A00.00&toDate=${lastDay}T23%3A59%3A59.00&dateId=THIS_MONTH&status=ALL&merchantId=${merchantId}&language=vi`
         ,
         {
           headers: {
