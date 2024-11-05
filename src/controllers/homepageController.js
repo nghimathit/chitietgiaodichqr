@@ -94,7 +94,7 @@ const loginAndGetAmount = async (username, password) => {
     //console.log("idQr",merchantId);
 
     const transactionData = await axios.get(
-      `https://proxymomo.onrender.com/api/transaction/v2/transactions?pageSize=100&pageNumber=0&fromDate=2024-11-01T00%3A00%3A00.00&toDate=2024-11-05T23%3A59%3A59.00&dateId=THIS_MONTH&status=ALL&merchantId=${merchantId}&language=vi`,
+      `https://proxymomo.onrender.com/api/transaction/v2/transactions?pageSize=100&pageNumber=0&fromDate=${fromDate}T00%3A00%3A00.00&toDate=${toDate}T23%3A59%3A59.00&dateId=THIS_MONTH&status=ALL&merchantId=${merchantId}&language=vi`,
       {
         headers: { Authorization: "Bearer " + token },
         timeout: 10000 // Thời gian chờ là 10 giây
