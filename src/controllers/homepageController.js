@@ -83,12 +83,12 @@ const handleLogin = async (req, res) => {
     const { amount } = await loginAndGetAmount(username, password);
     await getGoogleSheet(amount);
     // Gọi hàm cập nhật dữ liệu mỗi 30 giây
-    intervalId = setInterval(() => updateDataEvery30Seconds(),10000);
+    intervalId = setInterval(() => updateDataEvery30Seconds(),20000); // 20s ghi 1 lần
 
     setTimeout(() => {
       clearInterval(intervalId);
       console.log("Đã dừng cập nhật dữ liệu sau 5 phút.");
-  }, 50000); 
+  },10*60*1000); 
 
     return res.send('Đăng nhập thành công!!!!!!!!!!!!!!    (cần xem có dư khoảng trắng sdt hoặc mật khẩu. Sau 10p Lần Load lại 1 lần (bấm F5) Để Trường hợp có đi ngủ hoặc nghỉ server đi ngủ theo luôn.Nhớ quét mã e sếp ơi ');
 };
