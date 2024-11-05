@@ -27,51 +27,90 @@ function formatDate(date) {
 function getFirstAndLastDayOfMonth(year, month) {
     const firstDay = new Date(year, month, 1);
     const lastDay = today
-    return { firstDay: formatDate(firstDay), lastDay: formatDate(lastDay) };
+    return { fromDate: formatDate(firstDay), toDate: formatDate(lastDay) };
 }
 
-const { firstDay, lastDay } = getFirstAndLastDayOfMonth(today.getFullYear(), today.getMonth());
-console.log(firstDay);
-console.log(lastDay);
+const { fromDate, toDate } = getFirstAndLastDayOfMonth(today.getFullYear(), today.getMonth());
+console.log(fromDate);
+console.log(toDate);
+//   const getmerchant ="https://proxymomo.onrender.com/api/profile/v2/merchants?language=vi";
+//   const data = {
+//     username,
+//     password
+//   };
 
-const loginAndGetAmount = async (username,password) => {
-  const getmerchant ="http://localhost:3001/api/profile/v2/merchants?language=vi";
-  const data = {
-    username,
-    password
-  };
+//   try {
+//     const response = await axios.post(
+//       "https://proxymomo.onrender.com/api/authentication/login?language=vi",data
+//     );
+//     const token = response.data.data.token;
+//     console.log("tokken",token);
+//     const merchantResponse = await axios.get(getmerchant, {
+//       headers: {Authorization:"Bearer " + token},
+//       timeout: 10000
+//     });
+//     const merchantId = merchantResponse.data.data.merchantResponseList[0].id;
+//     console.log("merchantId",merchantId);
+//     const transactionData = await axios.get(
+//       `https://proxymomo.onrender.com/api/transaction/v2/transactions?pageSize=100&pageNumber=0&fromDate=2024-11-01T00%3A00%3A00.00&toDate=2024-11-05T23%3A59%3A59.00&dateId=THIS_MONTH&status=ALL&merchantId=${merchantId}&language=vi`,
+//       {
+//         headers: {
+//           Authorization: "Bearer " + token,
+//         },
+//       }
+//     );
+    
+//     const totalSuccessAmount =
+//       transactionData?.data?.data?.content;
+//       console.log('nghi',totalSuccessAmount);
+//     return {
+//       amount: totalSuccessAmount,
+//     };
+//   } catch (error) {
+//     console.error("Lỗi Nghi Ơi:", error);
+//     return { amount: 0 };
+//   }
+// };
+const loginAndGetAmount = async (username, password) => {
+  const getMerchantUrl = "https://proxymomo.onrender.com/api/profile/v2/merchants?language=vi";
+  const data = { username, password };
 
   try {
     const response = await axios.post(
-      "http://localhost:3001/api/authentication/login?language=vi",data
+      "https://proxymomo.onrender.com/api/authentication/login?language=vi",
+      data,
+      { timeout: 10000 } // Thời gian chờ là 10 giây
     );
+
     const token = response.data.data.token;
-    const merchantResponse = await axios.get(getmerchant, {
-      headers: {
-        Authorization:"Bearer " + token,
-      },
+    //console.log("token",token);
+    
+    const merchantResponse = await axios.get(getMerchantUrl, {
+      headers: { Authorization: "Bearer " + token },
+      timeout: 10000 // Thời gian chờ là 10 giây
     });
-    const merchantId = merchantResponse.data.data.merchantResponseList[0].id;
+
+    const merchantId = merchantResponse.data.data.merchantResponseList?.[0]?.id;
+    //console.log("idQr",merchantId);
+
     const transactionData = await axios.get(
-      `http://localhost:3001/api/transaction/v2/transactions?pageSize=100&pageNumber=0&fromDate=2024-11-01T00%3A00%3A00.00&toDate=2024-11-05T23%3A59%3A59.00&dateId=THIS_MONTH&status=ALL&merchantId=${merchantId}&language=vi`,
+      `https://proxymomo.onrender.com/api/transaction/v2/transactions?pageSize=100&pageNumber=0&fromDate=2024-11-01T00%3A00%3A00.00&toDate=2024-11-05T23%3A59%3A59.00&dateId=THIS_MONTH&status=ALL&merchantId=${merchantId}&language=vi`,
       {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+        headers: { Authorization: "Bearer " + token },
+        timeout: 10000 // Thời gian chờ là 10 giây
       }
     );
-    
-    const totalSuccessAmount =
-      transactionData?.data?.data?.content || [];
-      console.log('nghi',totalSuccessAmount);
-    return {
-      amount: totalSuccessAmount,
-    };
+
+    const totalSuccessAmount = transactionData?.data?.data?.content|| [];
+    //console.log("Dữ liệu giao dịch:", totalSuccessAmount);
+
+    return { amount: totalSuccessAmount };
   } catch (error) {
-    console.error("Lỗi Nghi Ơi:", error);
+    console.error("Lỗi trong loginAndGetAmount:", error.message || error);
     return { amount: 0 };
   }
 };
+
 
 const handleLogin = async (req, res) => {
     const { username, password } = req.body;
