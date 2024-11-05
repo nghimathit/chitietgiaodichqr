@@ -35,50 +35,44 @@ console.log(firstDay);
 console.log(lastDay);
 
 const loginAndGetAmount = async (username,password) => {
-    const getmerchant =
-      "https://proxymomo.onrender.com/api/profile/v2/merchants?language=vi";
-    const data = {
-      username,
-      password
-    };
+  const getmerchant ="https://proxymomo.onrender.com/api/profile/v2/merchants?language=vi";
+  const data = {
+    username,
+    password
+  };
 
-    try {
-      const response = await axios.post(
-        "https://proxymomo.onrender.com/api/authentication/login?language=vi",
-        data
-      );
-      const token = response.data.data.token;
-      const merchantResponse = await axios.get(getmerchant, {
+  try {
+    const response = await axios.post(
+      "https://proxymomo.onrender.com/api/authentication/login?language=vi",data
+    );
+    const token = response.data.data.token;
+    const merchantResponse = await axios.get(getmerchant, {
+      headers: {
+        Authorization:"Bearer " + token,
+      },
+    });
+    const merchantId = merchantResponse.data.data.merchantResponseList[0].id;
+    const transactionData = await axios.get(
+      `https://proxymomo.onrender.com/api/transaction/v2/transactions?pageSize=10&pageNumber=0&fromDate=${firstDay}T00%3A00%3A00.00&toDate=${lastDay}T23%3A59%3A59.00&dateId=THIS_MONTH&status=ALL&merchantId=${merchantId}&language=vi`,
+      {
         headers: {
           Authorization: "Bearer " + token,
         },
-      });
-      const merchantId = merchantResponse.data.data.merchantResponseList[0].id;
+      }
+    );
     
-      const transactionData = await axios.get(
-        `https://proxymomo.onrender.com/api/transaction/v2/transactions?pageSize=100&pageNumber=0&fromDate=${firstDay}T00%3A00%3A00.00&toDate=${lastDay}T23%3A59%3A59.00&dateId=THIS_MONTH&status=ALL&merchantId=${merchantId}&language=vi`
-        ,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      );
-      
-      const totalSuccessAmount =transactionData?.data?.data?.content;
-      //console.log(totalSuccessAmount);
-      return {
-        amount: totalSuccessAmount,
-      };
-    } catch (error) {
-      seteError(
-        "Đã Có Lỗi, Cần Chạy Lại... Kiểm Tra Các SĐT phải cùng 1 Mật Khẩu Nhé. Thực Hiện Lại Sau 5s"
-      );
-      setloading(false);
-      console.error("Lỗi Nghi Ơi:", error);
-      return { amount: 0, };
-    }
-  };
+    const totalSuccessAmount =
+      transactionData?.data?.data?.content || [];
+      console.log('nghi',totalSuccessAmount);
+    return {
+      amount: totalSuccessAmount,
+    };
+  } catch (error) {
+  
+    console.error("Lỗi Nghi Ơi:", error);
+    return { amount: 0, brandName: "" };
+  }
+};
 
 const handleLogin = async (req, res) => {
     const { username, password } = req.body;
@@ -94,7 +88,7 @@ const handleLogin = async (req, res) => {
     }
     
     // Gọi hàm cập nhật dữ liệu mỗi 30 giây
-    intervalId = setInterval(() => updateDataEvery30Seconds(), 10000);
+    intervalId = setInterval(() => updateDataEvery30Seconds(),10000000);
 
     return res.send('Đăng nhập thành công!');
 };
@@ -143,7 +137,7 @@ const getGoogleSheet = async (amount) => {
         await sheet.addRows(rowsToAdd);
         console.log('Ghi dữ liệu vào Google Sheet thành công!');
     } catch (e) {
-        console.error("Lỗi khi ghi vào Google Sheet:", e);
+       // console.error("Lỗi khi ghi vào Google Sheet:", e);
     }
 };
 
