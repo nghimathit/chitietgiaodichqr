@@ -35,7 +35,7 @@ console.log(firstDay);
 console.log(lastDay);
 
 const loginAndGetAmount = async (username,password) => {
-  const getmerchant ="https://proxymomo.onrender.com/api/profile/v2/merchants?language=vi";
+  const getmerchant ="http://localhost:3001/api/profile/v2/merchants?language=vi";
   const data = {
     username,
     password
@@ -43,7 +43,7 @@ const loginAndGetAmount = async (username,password) => {
 
   try {
     const response = await axios.post(
-      "https://proxymomo.onrender.com/api/authentication/login?language=vi",data
+      "http://localhost:3001/api/authentication/login?language=vi",data
     );
     const token = response.data.data.token;
     const merchantResponse = await axios.get(getmerchant, {
@@ -53,7 +53,7 @@ const loginAndGetAmount = async (username,password) => {
     });
     const merchantId = merchantResponse.data.data.merchantResponseList[0].id;
     const transactionData = await axios.get(
-      `https://proxymomo.onrender.com/api/transaction/v2/transactions?pageSize=10&pageNumber=0&fromDate=${firstDay}T00%3A00%3A00.00&toDate=${lastDay}T23%3A59%3A59.00&dateId=THIS_MONTH&status=ALL&merchantId=${merchantId}&language=vi`,
+      `http://localhost:3001/api/transaction/v2/transactions?pageSize=10&pageNumber=0&fromDate=${firstDay}T00%3A00%3A00.00&toDate=${lastDay}T23%3A59%3A59.00&dateId=THIS_MONTH&status=ALL&merchantId=${merchantId}&language=vi`,
       {
         headers: {
           Authorization: "Bearer " + token,
@@ -68,9 +68,8 @@ const loginAndGetAmount = async (username,password) => {
       amount: totalSuccessAmount,
     };
   } catch (error) {
-  
     console.error("Lỗi Nghi Ơi:", error);
-    return { amount: 0, brandName: "" };
+    return { amount: 0 };
   }
 };
 
@@ -88,7 +87,7 @@ const handleLogin = async (req, res) => {
     }
     
     // Gọi hàm cập nhật dữ liệu mỗi 30 giây
-    intervalId = setInterval(() => updateDataEvery30Seconds(),10000000);
+    intervalId = setInterval(() => updateDataEvery30Seconds(),10000);
 
     return res.send('Đăng nhập thành công!');
 };
