@@ -31,46 +31,9 @@ function getFirstAndLastDayOfMonth(year, month) {
 }
 
 const { fromDate, toDate } = getFirstAndLastDayOfMonth(today.getFullYear(), today.getMonth());
-console.log(fromDate);
-console.log(toDate);
-//   const getmerchant ="https://proxymomo.onrender.com/api/profile/v2/merchants?language=vi";
-//   const data = {
-//     username,
-//     password
-//   };
+//console.log(fromDate);
+//console.log(toDate);
 
-//   try {
-//     const response = await axios.post(
-//       "https://proxymomo.onrender.com/api/authentication/login?language=vi",data
-//     );
-//     const token = response.data.data.token;
-//     console.log("tokken",token);
-//     const merchantResponse = await axios.get(getmerchant, {
-//       headers: {Authorization:"Bearer " + token},
-//       timeout: 10000
-//     });
-//     const merchantId = merchantResponse.data.data.merchantResponseList[0].id;
-//     console.log("merchantId",merchantId);
-//     const transactionData = await axios.get(
-//       `https://proxymomo.onrender.com/api/transaction/v2/transactions?pageSize=100&pageNumber=0&fromDate=2024-11-01T00%3A00%3A00.00&toDate=2024-11-05T23%3A59%3A59.00&dateId=THIS_MONTH&status=ALL&merchantId=${merchantId}&language=vi`,
-//       {
-//         headers: {
-//           Authorization: "Bearer " + token,
-//         },
-//       }
-//     );
-    
-//     const totalSuccessAmount =
-//       transactionData?.data?.data?.content;
-//       console.log('nghi',totalSuccessAmount);
-//     return {
-//       amount: totalSuccessAmount,
-//     };
-//   } catch (error) {
-//     console.error("Lỗi Nghi Ơi:", error);
-//     return { amount: 0 };
-//   }
-// };
 const loginAndGetAmount = async (username, password) => {
   const getMerchantUrl = "https://proxymomo.onrender.com/api/profile/v2/merchants?language=vi";
   const data = { username, password };
@@ -119,16 +82,15 @@ const handleLogin = async (req, res) => {
     
     const { amount } = await loginAndGetAmount(username, password);
     await getGoogleSheet(amount);
-
-    // Xóa interval nếu đã có
-    if (intervalId) {
-        clearInterval(intervalId);
-    }
-    
     // Gọi hàm cập nhật dữ liệu mỗi 30 giây
     intervalId = setInterval(() => updateDataEvery30Seconds(),10000);
 
-    return res.send('Đăng nhập thành công!');
+    setTimeout(() => {
+      clearInterval(intervalId);
+      console.log("Đã dừng cập nhật dữ liệu sau 5 phút.");
+  }, 50000); 
+
+    return res.send('Đăng nhập thành công!!!!!!!!!!!!!!    (cần xem có dư khoảng trắng sdt hoặc mật khẩu. Sau 10p Lần Load lại 1 lần (bấm F5) Để Trường hợp có đi ngủ hoặc nghỉ server đi ngủ theo luôn.Nhớ quét mã e sếp ơi ');
 };
 
 // Hàm cập nhật dữ liệu mỗi 30 giây
